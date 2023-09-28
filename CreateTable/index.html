@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a table</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="" href="img/TableIcon.png">
+</head>
+<body>
+    <div class="buttonContainer">
+    <button class="actionButton addRowButton" onclick="addTableRow()">Add Row</button>
+    <button class="actionButton addColumnButton" onclick="addTableColumn()">Add Column</button>
+    <button class="actionButton deleteRowButton" onclick="deleteTableRow()">Delete</button>
+    <button class="actionButton editButton" onclick="editTable()">Edit</button>
+    <button class="actionButton resetButton" onclick="resetTable()">Reset</button>
+    <button class="actionButton saveButton" onclick="saveAsImage()">Save</button>
+    <button class="actionButton printButton" onclick="printPage()">Print</button>
+    </div>
+    <div class="tableContainer">
+    <table class="dataTable">
+        <tbody>
+            <tr class="tableColumn">
+                <td contenteditable="true" class="tableRow row1" onclick="changeRowColor(1)">Text</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    <input type="color" id="colorPickerElement" label="Pick your color!">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    <script src="js/functions.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
+
+</html>
