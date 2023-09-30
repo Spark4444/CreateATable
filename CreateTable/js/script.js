@@ -27,20 +27,20 @@ function addTableRow() {
                 columnNumber = prompt("Error, you should write a number.");
             }
             columnNumber -= 1;
-            columnElements[columnNumber].innerHTML += `<td contenteditable="true" class="tableRow row${rowId}" onclick="changeRowColor(${rowId})">Text</td>`;
+            columnElements[columnNumber].innerHTML += `<td contenteditable="true" spellcheck="false" class="tableRow row${rowId}" onclick="changeRowColor(${rowId})">Text</td>`;
             setTimeout(() => {
                 columnElements = document.querySelectorAll(".tableColumn");
             }, 10);
         }
         else{
-            columnElements[0].innerHTML += `<td contenteditable="true" class="tableRow row${rowId}" onclick="changeRowColor(${rowId})">Text</td>`;
+            columnElements[0].innerHTML += `<td contenteditable="true" spellcheck="false" class="tableRow row${rowId}" onclick="changeRowColor(${rowId})">Text</td>`;
             setTimeout(() => {
                 columnElements = document.querySelectorAll(".tableColumn");
             }, 10);
         }
     }
     else if(!isDeleteMode){
-        answerQuestionElement = "text";
+        answerQuestion = "text";
         setButtonStyle(addRowButton);
         resetButtonStyle(addColumnButton);
         resetButtonStyle(deleteRowButton);
@@ -121,7 +121,7 @@ function resetButtonStyle(button) {
 
 // Function to reset table
 function resetTable() {
-    tableBodyElement.innerHTML=`<tr class="tableColumn"><td contenteditable="true" class="tableRow row1" onclick="changeRowColor(1)">Text</td></tr>`;    
+    tableBodyElement.innerHTML=`<tr class="tableColumn"><td contenteditable="true" spellcheck="false" class="tableRow row1" onclick="changeRowColor(1)">Text</td></tr>`;    
     isEditingMode=false;
 }
 

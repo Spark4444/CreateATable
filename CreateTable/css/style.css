@@ -80,3 +80,6 @@ tbody {
    padding :10px; 
    text-align:center; 
 }
+.tableRow:focus{
+    outline: none;
+}
