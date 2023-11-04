@@ -1,6 +1,7 @@
 html{
     height: 100%;
     width: 100%;
+    transition: 0.5s;
 }
 body{
     align-items: center;
@@ -13,6 +14,7 @@ body{
     margin: 0;
     padding: 0;
     width: 100%;
+    transition: 0.5s;
 }
 .buttonContainer {
     align-items: center;
@@ -25,14 +27,16 @@ body{
     position: fixed;
     top: 0;
     width: 100%;
+    transition: 0.5s;
 }
 .actionButton {
     background: none;
     border: none;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
+    border-left: 0.01vw solid black;
+    border-right: 0.01vw solid black;
     color: #dce6e9;
     cursor: pointer;
+    font-size: 0.9vw;
     height: 100%;
     transition: 0.5s;
     width: 6%;
@@ -45,6 +49,7 @@ body{
 }
 input#colorPickerElement {
     display: none;
+    transition: 0.5s;
 }
 .tableContainer {
    align-items:center; 
@@ -53,6 +58,7 @@ input#colorPickerElement {
    justify-content:center; 
    margin : 2% 0 0 0; 
    width : 100%; 
+   transition: 0.5s;
 }
 .dataTable {
    align-items:flex-start; 
@@ -62,10 +68,12 @@ input#colorPickerElement {
    height : 98%; 
    justify-content : flex-start; 
    width : 98%; 
+   transition: 0.5s;
 }
 tbody {
    height :100%; 
    width :100%; 
+   transition: 0.5s;
 }
 .tableColumn{
    align-items:center; 
@@ -74,12 +82,16 @@ tbody {
    flex-wrap : nowrap; 
    justify-content : flex-start; 
    width : 100%; 
+   transition: 0.5s;
 }
 .tableRow {
-   border :3px solid black; 
-   padding :10px; 
+    border: 0.25vw solid black;
+    padding: 0.75%;
    text-align:center; 
+   font-size: 1vw;
+   transition: 0.5s;
 }
 .tableRow:focus{
     outline: none;
+    transition: 0.5s;
 }
