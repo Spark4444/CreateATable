@@ -129,7 +129,7 @@ function resetTable() {
 function saveAsImage(){
     toggleDisplay();
     html2canvas(document.body).then(function(canvas) {
-        var link = document.createElement('a');
+        let link = document.createElement('a');
         link.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
         link.download = 'screenshot.jpg';
         link.click();
@@ -182,3 +182,23 @@ function toggleDisplay() {
     buttonContainerElement.style.display = displayStatus;
     colorPickerElement.style.display = displayStatus;
 }
+
+//Saving function
+function saveTag() {
+    let tags = tableBodyElement.innerHTML;
+    let blob = new Blob([tags], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "save.txt");
+}
+
+$("input[type='file']").change(function(e) {
+    let file = e.target.files[0];
+    if (!file) {
+        alert("Incorect file type!");
+    }
+    let reader = new FileReader();
+    reader.onload = function(e) {
+        let contents = e.target.result;
+        tableBodyElement.innerHTML = contents;
+    };
+    reader.readAsText(file);
+});

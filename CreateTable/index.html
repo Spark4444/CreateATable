@@ -8,14 +8,17 @@
     <link rel="icon" type="" href="img/TableIcon.png">
 </head>
 <body>
+    <input style="display: none;" type="file" accept=".txt" id="txtFileRead">
     <div class="buttonContainer">
     <button class="actionButton addRowButton" onclick="addTableRow()">Add Row</button>
     <button class="actionButton addColumnButton" onclick="addTableColumn()">Add Column</button>
     <button class="actionButton deleteRowButton" onclick="deleteTableRow()">Delete</button>
     <button class="actionButton editButton" onclick="editTable()">Edit</button>
     <button class="actionButton resetButton" onclick="resetTable()">Reset</button>
-    <button class="actionButton saveButton" onclick="saveAsImage()">Save</button>
+    <button class="actionButton saveScrButton" onclick="saveAsImage()">Save Screenshot</button>
     <button class="actionButton printButton" onclick="printPage()">Print</button>
+    <button class="actionButton saveButton" onclick="saveTag()">Save</button>
+    <button class="actionButton openButton" onclick="document.getElementById('txtFileRead').click()">Open</button>
     </div>
     <div class="tableContainer">
     <table class="dataTable">
@@ -27,6 +30,8 @@
     </table>
     </div>
     <input type="color" id="colorPickerElement" label="Pick your color!">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="js/FileSaver.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
     <script src="js/functions.js"></script>
     <script src="js/script.js"></script>
