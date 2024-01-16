@@ -9,35 +9,24 @@ let deleteRowButton = document.querySelector(".deleteRowButton");
 let editButton = document.querySelector(".editButton");
 
 // Initializing variables
-let isEditingMode = false;
+let TrHeight = document.querySelector(".tableColumn").getBoundingClientRect().height;
 let rowId = 1;
+let columnId = 1;
 let currentRowId;
 let answerQuestionElement;
 let isDeleteMode = false;
+let isEditingMode = false;
+let isRawEditingMode = false;
 
-// Function to add a table row
-function addTableRow() {
-    if(!isEditingMode && !isDeleteMode){
-        rowId++;
-        let columnNumber = 1;
-        if(columnElements.length > 1){
-            columnNumber = prompt("In which column?");
-            while(!isNumeric(columnNumber) || columnNumber > columnElements.length || columnNumber < 1){
-                console.error("Invalid type of data!");            
-                columnNumber = prompt("Error, you should write a number.");
-            }
-            columnNumber -= 1;
-            columnElements[columnNumber].innerHTML += `<td contenteditable="true" spellcheck="false" class="tableRow row${rowId}" onclick="changeRowColor(${rowId})">Text</td>`;
-            setTimeout(() => {
-                columnElements = document.querySelectorAll(".tableColumn");
-            }, 10);
-        }
-        else{
-            columnElements[0].innerHTML += `<td contenteditable="true" spellcheck="false" class="tableRow row${rowId}" onclick="changeRowColor(${rowId})">Text</td>`;
-            setTimeout(() => {
-                columnElements = document.querySelectorAll(".tableColumn");
-            }, 10);
-        }
+// Function to change raw editing state
+function rawEditingMode() {
+    if(!isEditingMode && !isDeleteMode && !isRawEditingMode){
+        isRawEditingMode = true;
+        document.querySelector(".addRowButton").style.background="#036036";
+    }
+    else if(isRawEditingMode){
+        document.querySelector(".addRowButton").style.background="";
+        isRawEditingMode = false;
     }
     else if(!isDeleteMode){
         answerQuestion = "text";
@@ -47,10 +36,18 @@ function addTableRow() {
     }
 }
 
+function addRow(column) {
+    if(isRawEditingMode){
+        columnElements[column].innerHTML += `<td contenteditable="true" spellcheck="false" class="tableRow row${rowId}" onclick="changeRowColor(${rowId})">Text</td>`;
+        rowId++;
+    }
+}
+
 // Function to add a column
 function addTableColumn() {
     if(!isEditingMode && !isDeleteMode){
-        tableBodyElement.innerHTML += `<tr class="tableColumn"></tr>`;
+        tableBodyElement.innerHTML += `<tr class="tableColumn" onclick="addRow(${columnId})" style="height:${TrHeight}px"></tr>`;
+        columnId++;
         setTimeout(() => {
             columnElements = document.querySelectorAll(".tableColumn");
         }, 10);
@@ -121,6 +118,8 @@ function resetButtonStyle(button) {
 
 // Function to reset table
 function resetTable() {
+    rowId = 0;
+    columnId = 0;
     tableBodyElement.innerHTML=`<tr class="tableColumn"><td contenteditable="true" spellcheck="false" class="tableRow row1" onclick="changeRowColor(1)">Text</td></tr>`;    
     isEditingMode=false;
 }
