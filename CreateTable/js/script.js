@@ -18,6 +18,18 @@ let isDeleteMode = false;
 let isEditingMode = false;
 let isRowEditingMode = false;
 
+setInterval(() => {
+    TrHeight = document.querySelector(".tableColumn").getBoundingClientRect().height
+    columnElements = document.querySelectorAll(".tableColumn");
+    for(let i = 0;i < columnElements.length;i++){
+        if(i != 0){
+            columnElements[i].style.height = `${TrHeight}px`;
+        }
+    }
+}, 1000);
+
+set
+
 // Function to change row editing state
 function rowEditingMode() {
     if(!isEditingMode && !isRowEditingMode){
