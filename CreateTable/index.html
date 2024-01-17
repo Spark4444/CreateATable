@@ -10,7 +10,7 @@
 <body>
     <input style="display: none;" type="file" accept=".txt" id="txtFileRead">
     <div class="buttonContainer">
-    <button class="actionButton addRowButton" onclick="rawEditingMode()">Add Row</button>
+    <button class="actionButton addRowButton" onclick="rowEditingMode()">Add Row</button>
     <button class="actionButton addColumnButton" onclick="addTableColumn()">Add Column</button>
     <button class="actionButton deleteRowButton" onclick="deleteTableRow()">Delete</button>
     <button class="actionButton editButton" onclick="editTable()">Edit</button>
@@ -24,7 +24,7 @@
     <table class="dataTable">
         <tbody>
             <tr class="tableColumn" onclick="addRow(0)">
-                <td contenteditable="true" spellcheck="false" class="tableRow row0" onclick="changeRowColor(1)">Text</td>
+                <td contenteditable="true" spellcheck="false" class="tableRow row0" onclick="changeRowColor(0)">Text</td>
             </tr>
         </tbody>
     </table>

@@ -16,17 +16,20 @@ let currentRowId;
 let answerQuestionElement;
 let isDeleteMode = false;
 let isEditingMode = false;
-let isRawEditingMode = false;
+let isRowEditingMode = false;
 
-// Function to change raw editing state
-function rawEditingMode() {
-    if(!isEditingMode && !isDeleteMode && !isRawEditingMode){
-        isRawEditingMode = true;
-        document.querySelector(".addRowButton").style.background="#036036";
+// Function to change row editing state
+function rowEditingMode() {
+    if(!isEditingMode && !isRowEditingMode){
+        isEditingMode = false;
+        isDeleteMode = false;
+        resetButtons();
+        isRowEditingMode = true;
+        setButtonStyle(addRowButton);
     }
-    else if(isRawEditingMode){
+    else if(isRowEditingMode){
         document.querySelector(".addRowButton").style.background="";
-        isRawEditingMode = false;
+        isRowEditingMode = false;
     }
     else if(!isDeleteMode){
         answerQuestion = "text";
@@ -37,7 +40,7 @@ function rawEditingMode() {
 }
 
 function addRow(column) {
-    if(isRawEditingMode){
+    if(isRowEditingMode){
         columnElements[column].innerHTML += `<td contenteditable="true" spellcheck="false" class="tableRow row${rowId}" onclick="changeRowColor(${rowId})">Text</td>`;
         rowId++;
     }
@@ -45,7 +48,7 @@ function addRow(column) {
 
 // Function to add a column
 function addTableColumn() {
-    if(!isEditingMode && !isDeleteMode){
+    if(!isEditingMode){
         tableBodyElement.innerHTML += `<tr class="tableColumn" onclick="addRow(${columnId})" style="height:${TrHeight}px"></tr>`;
         columnId++;
         setTimeout(() => {
@@ -63,6 +66,9 @@ function addTableColumn() {
 // Function to delete a row
 function deleteTableRow(){
     if(!isEditingMode && !isDeleteMode){
+        isEditingMode = false;
+        isRowEditingMode = false;
+        resetButtons();
         isDeleteMode = true;
         setButtonStyle(deleteRowButton);
     }
@@ -90,9 +96,12 @@ function editTable() {
     else{
         answerQuestion = "";
         isEditingMode = true;
+        isDeleteMode = false;
+        isRowEditingMode = false;
         addRowButton.innerHTML = "text";
         addColumnButton.innerHTML = "background";
         deleteRowButton.innerHTML = "border";
+        resetButtons();
         setButtonStyle(editButton);
     }
 }
@@ -190,11 +199,11 @@ function saveTag() {
 }
 
 $("input[type='file']").change(function(e) {
-    let file = e.target.files[0];
+    var file = e.target.files[0];
     if (!file) {
         alert("Incorect file type!");
     }
-    let reader = new FileReader();
+    var reader = new FileReader();
     reader.onload = function(e) {
         let contents = e.target.result;
         tableBodyElement.innerHTML = contents;
