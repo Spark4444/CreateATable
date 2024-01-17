@@ -9,7 +9,7 @@ let deleteRowButton = document.querySelector(".deleteRowButton");
 let editButton = document.querySelector(".editButton");
 
 // Initializing variables
-let TrHeight = document.querySelector(".tableColumn").getBoundingClientRect().height;
+let trHeight = document.querySelector(".tableColumn").getBoundingClientRect().height;
 let rowId = 1;
 let columnId = 1;
 let currentRowId;
@@ -18,17 +18,34 @@ let isDeleteMode = false;
 let isEditingMode = false;
 let isRowEditingMode = false;
 
+//Set interval for changing the height of columns
 setInterval(() => {
-    TrHeight = document.querySelector(".tableColumn").getBoundingClientRect().height
+    trHeight = document.querySelector(".tableColumn").getBoundingClientRect().height
     columnElements = document.querySelectorAll(".tableColumn");
+    let height = window.innerHeight;
+    let vw = height * 0.00400;
+    trHeight -= vw
     for(let i = 0;i < columnElements.length;i++){
         if(i != 0){
-            columnElements[i].style.height = `${TrHeight}px`;
+            columnElements[i].style.minHeight = `${trHeight}px`;
         }
     }
-}, 1000);
+}, 100);
 
-set
+setInterval(() => {
+    for(let a = 0;a < columnElements.length;a++){
+        let elementsInside = columnElements[a].querySelectorAll("td");
+        for(let i = 0;i < elementsInside.length;i++){
+            console.log(a);
+            if(i != 0){
+                elementsInside[i].style.borderLeft = "0 solid black";
+            }
+            if(a > 0){
+                elementsInside[i].style.borderTop = "0 solid black";
+            }
+        }
+    }
+}, 100);
 
 // Function to change row editing state
 function rowEditingMode() {
@@ -61,7 +78,7 @@ function addRow(column) {
 // Function to add a column
 function addTableColumn() {
     if(!isEditingMode){
-        tableBodyElement.innerHTML += `<tr class="tableColumn" onclick="addRow(${columnId})" style="height:${TrHeight}px"></tr>`;
+        tableBodyElement.innerHTML += `<tr class="tableColumn" onclick="addRow(${columnId})" style="height:${trHeight}px"></tr>`;
         columnId++;
         setTimeout(() => {
             columnElements = document.querySelectorAll(".tableColumn");
