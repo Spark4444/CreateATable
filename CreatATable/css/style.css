@@ -1,9 +1,10 @@
-html{
+html {
     height: 100%;
-    width: 100%;
     transition: 0.5s;
+    width: 100%;
 }
-body{
+
+body {
     align-items: center;
     background: white;
     box-sizing: border-box;
@@ -13,9 +14,10 @@ body{
     justify-content: center;
     margin: 0;
     padding: 0;
-    width: 100%;
     transition: 0.5s;
+    width: 100%;
 }
+
 .buttonContainer {
     align-items: center;
     background: #217245;
@@ -26,14 +28,15 @@ body{
     justify-content: space-evenly;
     position: fixed;
     top: 0;
-    width: 100%;
     transition: 0.5s;
+    width: 100%;
 }
+
 .actionButton {
     background: none;
-    border: none;
     border-left: 0.01vw solid black;
     border-right: 0.01vw solid black;
+    border: none;
     color: #dce6e9;
     cursor: pointer;
     font-size: 0.9vw;
@@ -41,57 +44,66 @@ body{
     transition: 0.5s;
     width: 8%;
 }
-.actionButton:hover{
+
+.actionButton:hover {
     background: #036036;
 }
-.actionButton:active{
+
+.actionButton:active {
     background: #036036;
 }
+
 input#colorPickerElement {
     display: none;
     transition: 0.5s;
 }
+
 .tableContainer {
-   align-items:center; 
-   display:flex; 
-   height : 96%; 
-   justify-content:center; 
-   margin : 2% 0 0 0; 
-   width : 100%; 
-   transition: 0.5s;
+    align-items: center;
+    display: flex;
+    height: 96%;
+    justify-content: center;
+    margin: 2% 0 0 0;
+    transition: 0.5s;
+    width: 100%;
 }
+
 .dataTable {
-   align-items:flex-start; 
-   display:flex; 
-   flex-direction : column; 
-   flex-wrap : nowrap; 
-   height : 98%; 
-   justify-content : flex-start; 
-   width : 98%; 
-   transition: 0.5s;
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    height: 98%;
+    justify-content: flex-start;
+    transition: 0.5s;
+    width: 98%;
 }
+
 tbody {
-   height :100%; 
-   width :100%; 
-   transition: 0.5s;
+    height: 100%;
+    transition: 0.5s;
+    width: 100%;
 }
-.tableColumn{
-   align-items:center; 
-   display:flex; 
-   flex-direction : row; 
-   flex-wrap : nowrap; 
-   justify-content : flex-start; 
-   width : 100%; 
-   transition: 0.5s;
+
+.tableColumn {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    transition: 0.5s;
+    width: 100%;
 }
+
 .tableRow {
     border: 0.25vw solid black;
+    font-size: 1vw;
     padding: 0.75%;
-   text-align:center; 
-   font-size: 1vw;
-   transition: 0.5s;
+    text-align: center;
+    transition: 0.5s;
 }
-.tableRow:focus{
+
+.tableRow:focus {
     outline: none;
     transition: 0.5s;
 }
