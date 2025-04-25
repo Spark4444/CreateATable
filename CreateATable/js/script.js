@@ -1,241 +1,230 @@
-// Selecting HTML elements
-let buttonContainerElement = document.querySelector(".buttonContainer");
-let tableBodyElement = document.querySelector("tbody");
-let columnElements = document.querySelectorAll(".tableColumn");
-let colorPickerElement = document.getElementById("colorPickerElement");
-let addRowButton = document.querySelector(".addRowButton");
-let addColumnButton = document.querySelector(".addColumnButton");
-let deleteRowButton = document.querySelector(".deleteRowButton");
-let editButton = document.querySelector(".editButton");
+// DOM elements
+let table = document.querySelector(".dataTable");
+let actionButtons = document.querySelectorAll(".actionButton");
+let colorPickerElement = document.querySelector("#colorPickerElement");
 
-// Initializing variables
-let trHeight = document.querySelector(".tableColumn").getBoundingClientRect().height;
-let rowId = 1;
-let columnId = 1;
-let currentRowId;
-let answerQuestionElement;
-let isDeleteMode = false;
-let isEditingMode = false;
-let isRowEditingMode = false;
+// Arrays
+let tableMatrix = [[0]];
 
-//Set interval for changing the height of columns
-setInterval(() => {
-    trHeight = document.querySelector(".tableColumn").getBoundingClientRect().height
-    columnElements = document.querySelectorAll(".tableColumn");
-    let height = window.innerHeight;
-    let vw = height * 0.00400;
-    trHeight -= vw
-    for(let i = 0;i < columnElements.length;i++){
-        if(i != 0){
-            columnElements[i].style.minHeight = `${trHeight}px`;
+// Numbers
+let currentRowId = 0;
+
+// Objects
+let modes = {
+    dataAddMode: {
+        button: 0,
+        state: false
+    },
+    deleteMode: {
+        button: 2,
+        state: false
+    },
+    editMode: {
+        button: 3,
+        state: false,
+        submodes: {
+            editColor: {
+                button: 0,
+                state: false
+            },
+            editBackground: {
+                button: 1,
+                state: false
+            },
+            editBorder: {
+                button: 2,
+                state: false
+            },
         }
     }
-}, 100);
+}
 
-setInterval(() => {
-    for(let a = 0;a < columnElements.length;a++){
-        let elementsInside = columnElements[a].querySelectorAll("td");
-        for(let i = 0;i < elementsInside.length;i++){
-            console.log(a);
-            if(i != 0){
-                elementsInside[i].style.borderLeft = "0 solid black";
+// Displays the table matrix in the console for debugging purposes
+function displayMatrix() {
+    tableMatrix.forEach((row, rowIndex) => {
+        let logDisplay = "";
+        row.forEach((data, dataIndex) => {
+            logDisplay += `${data} `;
+        });
+        logDisplay += `\n`
+        console.log(logDisplay);
+    });
+}
+
+// Clears the active styles of all buttons except the ones specified in the 'except' array
+function clearButtonStyles(except = []) {
+    actionButtons.forEach((button, index) => {
+        let allNotEqual = true;
+
+        except.forEach((exceptButton) => {
+            if(index === exceptButton) {
+                allNotEqual = false;
             }
-            if(a > 0){
-                elementsInside[i].style.borderTop = "0 solid black";
+        });
+
+        if(allNotEqual) {
+            button.classList.remove("activeButton");
+        }
+    });
+}
+
+// Toggles the active style of a button based on its index
+function toggleButtonStyle(buttonIndex) {
+    actionButtons[buttonIndex].classList.toggle("activeButton");
+}
+
+// Toggles the state of a mode and updates button styles accordingly
+function toggleMode(mode) {
+    let tableRows = document.querySelectorAll(".tableRow");
+
+    if(mode === false){
+        Object.keys(modes).forEach((m) => {
+            m.state = false;
+        });
+
+        Object.keys(modes.editMode.submodes).forEach((m) => {
+            m.state = false;
+        });
+
+        clearButtonStyles();
+        return;
+    }
+
+    clearButtonStyles([modes[mode].button]);
+
+    modes[mode].state = !modes[mode].state;
+    toggleButtonStyle(modes[mode].button);
+
+    if(modes[mode].state) {
+        Object.keys(modes).forEach((m) => {
+            if (m !== mode) {
+                modes[m].state = false;
+            }
+        });
+    }
+
+    if(modes.dataAddMode.state) {
+        tableRows.forEach((row) => {
+            row.style.cursor = "pointer";
+        });
+    }
+
+    else {
+        tableRows.forEach((row) => {
+            row.style.cursor = "";
+        });
+    }
+
+    if(modes.editMode.state) {
+        Object.keys(modes.editMode.submodes).forEach((m) => {
+            modes.editMode.submodes[m].state = false;
+        });
+
+        actionButtons[0].innerHTML = "Text";
+        actionButtons[1].innerHTML = "Background";
+        actionButtons[2].innerHTML = "Border";
+        
+        actionButtons[0].setAttribute("onclick", "toggleSubMode('editMode', 'editColor')");
+        actionButtons[1].setAttribute("onclick", "toggleSubMode('editMode', 'editBackground')");
+        actionButtons[2].setAttribute("onclick", "toggleSubMode('editMode', 'editBorder')");
+    }
+
+    else {
+        actionButtons[0].innerHTML = "Add Data";
+        actionButtons[1].innerHTML = "Add Row";
+        actionButtons[2].innerHTML = "Delete";
+
+        actionButtons[0].setAttribute("onclick", "toggleMode('dataAddMode')");
+        actionButtons[1].setAttribute("onclick", "addRow()");
+        actionButtons[2].setAttribute("onclick", "toggleMode('deleteMode')");
+    }
+}
+
+// Toggles the state of a submode and updates button styles accordingly
+function toggleSubMode(mode, submode) {
+    clearButtonStyles([modes[mode].submodes[submode].button, modes[mode].button]);
+    modes[mode].submodes[submode].state = !modes[mode].submodes[submode].state;
+    toggleButtonStyle(modes[mode].submodes[submode].button);
+
+    if(modes[mode].submodes[submode].state) {
+        for(let m in modes[mode].submodes) {
+            if(m !== submode) {
+                modes[mode].submodes[m].state = false;
             }
         }
     }
-}, 100);
-
-// Function to change row editing state
-function rowEditingMode() {
-    if(!isEditingMode && !isRowEditingMode){
-        isEditingMode = false;
-        isDeleteMode = false;
-        resetButtons();
-        isRowEditingMode = true;
-        setButtonStyle(addRowButton);
-    }
-    else if(isRowEditingMode){
-        document.querySelector(".addRowButton").style.background="";
-        isRowEditingMode = false;
-    }
-    else if(!isDeleteMode){
-        answerQuestion = "text";
-        setButtonStyle(addRowButton);
-        resetButtonStyle(addColumnButton);
-        resetButtonStyle(deleteRowButton);
-    }
 }
 
-function addRow(column) {
-    if(isRowEditingMode){
-        columnElements[column].innerHTML += `<td contenteditable="true" spellcheck="false" class="tableRow row${rowId}" onclick="changeRowColor(${rowId})">Text</td>`;
-        rowId++;
-    }
+// Adds a new row to the table and updates the table matrix
+function addRow() {
+    currentRowId++;
+    let cursor;
+    modes.dataAddMode.state ? cursor = "style = 'cursor: pointer;'" : cursor = "";
+
+    table.innerHTML += `<tr class="tableRow" id="row${currentRowId}" onclick=addData(${currentRowId}) ${cursor}></tr>`;
 }
 
-// Function to add a column
-function addTableColumn() {
-    if(!isEditingMode){
-        tableBodyElement.innerHTML += `<tr class="tableColumn" onclick="addRow(${columnId})" style="height:${trHeight}px"></tr>`;
-        columnId++;
-        setTimeout(() => {
-            columnElements = document.querySelectorAll(".tableColumn");
-        }, 10);
-    }
-    else if(!isDeleteMode){
-        answerQuestion = "background";
-        setButtonStyle(addColumnButton);
-        resetButtonStyle(addRowButton);
-        resetButtonStyle(deleteRowButton);
+// Adds a new data cell to a specific row in the table
+function addData(rowId) {
+    if(modes.dataAddMode.state) {
+        let row = document.querySelector(`#row${rowId}`);
+
+        if(tableMatrix[rowId] == undefined) {
+            tableMatrix[rowId] = [0];
+        }
+        else {
+            tableMatrix[rowId].push(tableMatrix[rowId].length);
+        }
+
+        let id = `${rowId}${tableMatrix[rowId].length - 1}`;
+
+        row.innerHTML += `<td contenteditable="true" spellcheck="false" class="tableData" id="data${id}" onclick="deleteEditData(${id})">Text</td>`;
     }
 }
 
-// Function to delete a row
-function deleteTableRow(){
-    if(!isEditingMode && !isDeleteMode){
-        isEditingMode = false;
-        isRowEditingMode = false;
-        resetButtons();
-        isDeleteMode = true;
-        setButtonStyle(deleteRowButton);
+// Deletes or edits a data cell based on the current mode
+function deleteEditData(dataId){
+    dataId = dataId.toString();
+    if(dataId.length == 1) {
+        dataId = `0${dataId}`;
     }
-    else if(!isEditingMode && isDeleteMode){
-        isDeleteMode = false;
-        resetButtonStyle(deleteRowButton);
+
+    let data = document.querySelector(`#data${dataId}`);
+    if(modes.deleteMode.state) {
+        data.remove();
+        tableMatrix.forEach((row, rowIndex) => {
+            if(row[dataId] != undefined) {
+                row.splice(dataId, 1);
+            }
+        });
     }
-    else if(!isDeleteMode){
-        answerQuestion = "border";
-        setButtonStyle(deleteRowButton);
-        resetButtonStyle(addRowButton);
-        resetButtonStyle(addColumnButton);
-    }
-}
 
-// Function to edit
-function editTable() {
-    if(isEditingMode){
-        isEditingMode = false;
-        addRowButton.innerHTML = "Add Row";
-        addColumnButton.innerHTML = "Add Column";
-        deleteRowButton.innerHTML = "Delete";
-        resetButtons();
-    }
-    else{
-        answerQuestion = "";
-        isEditingMode = true;
-        isDeleteMode = false;
-        isRowEditingMode = false;
-        addRowButton.innerHTML = "text";
-        addColumnButton.innerHTML = "background";
-        deleteRowButton.innerHTML = "border";
-        resetButtons();
-        setButtonStyle(editButton);
-    }
-}
+    else if(modes.editMode.state) {
+        // Click on the color picker which is hidden to show the user the color picker to choose a style depending on the submode
+        if(modes.editMode.submodes.editColor.state && modes.editMode.state) {
+            colorPickerElement.click();
+        }
 
-// Function to reset buttons
-function resetButtons() {
-    resetButtonStyle(editButton);
-    resetButtonStyle(addRowButton);
-    resetButtonStyle(addColumnButton);
-    resetButtonStyle(deleteRowButton);
-}
+        else if(modes.editMode.submodes.editBackground.state && modes.editMode.state) {
+            colorPickerElement.click();
+        }
 
-// Function to set button style
-function setButtonStyle(button) {
-    button.style.background="#036036";
-}
-
-// Function to reset button style
-function resetButtonStyle(button) {
-    button.style.background="";
-    button.style.border="";
-}
-
-// Function to reset table
-function resetTable() {
-    rowId = 0;
-    columnId = 0;
-    tableBodyElement.innerHTML=`<tr class="tableColumn"><td contenteditable="true" spellcheck="false" class="tableRow row1" onclick="changeRowColor(1)">Text</td></tr>`;    
-    isEditingMode=false;
-}
-
-// Function to save the current state as an image
-function saveAsImage(){
-    toggleDisplay();
-    html2canvas(document.body).then(function(canvas) {
-        let link = document.createElement('a');
-        link.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
-        link.download = 'screenshot.jpg';
-        link.click();
-        toggleDisplay();
-    }); 
-}
-
-// Function to print the current state
-function printPage(){
-    toggleDisplay();
-    window.print();
-    toggleDisplay();
-}
-
-// Function to change color of a row
-function changeRowColor(rowId) {
-    if(isEditingMode){
-        if(answerQuestion !== ""){
-            currentRowId = rowId;
+        else if(modes.editMode.submodes.editBorder.state && modes.editMode.state) {
             colorPickerElement.click();
         }
     }
-    else if(isDeleteMode){
-        currentRowId = rowId;
-        document.querySelector(`.row${currentRowId}`).remove();
-    }
 }
 
-// Event listener for color picker
-colorPickerElement.addEventListener('change', function() {
-    if(answerQuestion){
-        switch(answerQuestion){
-            case "text":
-                document.querySelector(`.row${currentRowId}`).style.color = colorPickerElement.value;
-            break;
-            case "background":
-                document.querySelector(`.row${currentRowId}`).style.backgroundColor = colorPickerElement.value;
-            break;
-            case "border":
-                document.querySelector(`.row${currentRowId}`).style.border = `solid 2px ${colorPickerElement.value}`;
-            break;
-        }  
-    }
-    colorPickerElement.value = '#000000';
-});
-
-// Function to toggle display of buttons and color picker
-function toggleDisplay() {
-    let displayStatus = buttonContainerElement.style.display === "none" ? "" : "none";
-    buttonContainerElement.style.display = displayStatus;
-    colorPickerElement.style.display = displayStatus;
+// Resets the table to its initial state and clears all modes
+function resetTable() {
+    table.innerHTML = `<tr class="tableRow" id="row0" onclick="addData(0)"><td contenteditable="true" spellcheck="false" class="tableData" id="data00" onclick="deleteEditData('00')">Text</td></tr>`;
+    tableMatrix = [[0]];
+    currentRowId = 0;
+    toggleMode(false);
 }
 
-//Saving function
-function saveTag() {
-    let tags = tableBodyElement.innerHTML;
-    let blob = new Blob([tags], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, "save.txt");
-}
-
-$("input[type='file']").change(function(e) {
-    var file = e.target.files[0];
-    if (!file) {
-        alert("Incorect file type!");
+colorPickerElement.addEventListener("input", (e) => {
+    if(modes.editMode.state) {
+        
     }
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        let contents = e.target.result;
-        tableBodyElement.innerHTML = contents;
-    };
-    reader.readAsText(file);
 });
