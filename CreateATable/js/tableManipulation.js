@@ -2,6 +2,7 @@
 let table = document.querySelector(".dataTable");
 let actionButtons = document.querySelectorAll(".actionButton");
 let colorPickerElement = document.querySelector("#colorPickerElement");
+let currentlyEditingElement;
 
 // Arrays
 let tableMatrix = [[0]];
@@ -38,6 +39,9 @@ let modes = {
         }
     }
 }
+
+// Strings
+let editingStyle;
 
 // Displays the table matrix in the console for debugging purposes
 function displayMatrix() {
@@ -79,11 +83,11 @@ function toggleMode(mode) {
 
     if(mode === false){
         Object.keys(modes).forEach((m) => {
-            m.state = false;
+            modes[m].state = false;
         });
 
         Object.keys(modes.editMode.submodes).forEach((m) => {
-            m.state = false;
+            modes.editMode.submodes[m].state = false;
         });
 
         clearButtonStyles();
@@ -162,6 +166,8 @@ function addRow() {
     modes.dataAddMode.state ? cursor = "style = 'cursor: pointer;'" : cursor = "";
 
     table.innerHTML += `<tr class="tableRow" id="row${currentRowId}" onclick=addData(${currentRowId}) ${cursor}></tr>`;
+
+    styleRows();
 }
 
 // Adds a new data cell to a specific row in the table
@@ -179,6 +185,8 @@ function addData(rowId) {
         let id = `${rowId}${tableMatrix[rowId].length - 1}`;
 
         row.innerHTML += `<td contenteditable="true" spellcheck="false" class="tableData" id="data${id}" onclick="deleteEditData(${id})">Text</td>`;
+
+        styleData();
     }
 }
 
@@ -192,6 +200,8 @@ function deleteEditData(dataId){
     let data = document.querySelector(`#data${dataId}`);
     if(modes.deleteMode.state) {
         data.remove();
+        styleData();
+
         tableMatrix.forEach((row, rowIndex) => {
             if(row[dataId] != undefined) {
                 row.splice(dataId, 1);
@@ -200,19 +210,43 @@ function deleteEditData(dataId){
     }
 
     else if(modes.editMode.state) {
-        // Click on the color picker which is hidden to show the user the color picker to choose a style depending on the submode
-        if(modes.editMode.submodes.editColor.state && modes.editMode.state) {
-            colorPickerElement.click();
+        let submodes = modes.editMode.submodes;
+        if(submodes.editColor.state) {
+            editingStyle = "c";
         }
 
-        else if(modes.editMode.submodes.editBackground.state && modes.editMode.state) {
-            colorPickerElement.click();
+        else if(submodes.editBackground.state) {
+            editingStyle = "b";
         }
 
-        else if(modes.editMode.submodes.editBorder.state && modes.editMode.state) {
+        else if(submodes.editBorder.state) {
+            editingStyle = "d";
+        }
+
+        if(submodes.editColor.state || submodes.editBackground.state || submodes.editBorder.state) {
+            currentlyEditingElement = data;
+            // Click on the color picker which is hidden to show the user the color picker to choose a color depending on the submode
             colorPickerElement.click();
         }
     }
+}
+
+// Styles the data cells in the table
+function styleData() {
+    document.querySelectorAll(".tableRow").forEach((row, rowIndex) => {
+        let left = 0;
+        row.querySelectorAll(".tableData").forEach((data, dataIndex) => {
+            data.style.left = `${left}%`;
+            left -= 0.25;
+        });
+    });
+}
+
+// Styles the rows in the table
+function styleRows() {
+    document.querySelectorAll(".tableRow").forEach((row, rowIndex) => {
+        row.style.top = `-${rowIndex * 8}%`;
+    });
 }
 
 // Resets the table to its initial state and clears all modes
@@ -223,8 +257,22 @@ function resetTable() {
     toggleMode(false);
 }
 
+// Handles color picker input to apply styles to the currently editing element
 colorPickerElement.addEventListener("input", (e) => {
-    if(modes.editMode.state) {
-        
+    let submodes = modes.editMode.submodes;
+    if(modes.editMode.state && (submodes.editColor.state || submodes.editBackground.state || submodes.editBorder.state)) {
+        let color = colorPickerElement.value;
+
+        switch(editingStyle) {
+            case "c":
+                currentlyEditingElement.style.color = color;
+                break;
+            case "b":
+                currentlyEditingElement.style.background = color;
+                break;
+            case "d":
+                currentlyEditingElement.style.border = `0.25vw solid ${color}`;
+                break;
+        }
     }
 });
