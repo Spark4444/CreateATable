@@ -8,17 +8,17 @@
     <link rel="icon" type="" href="img/TableIcon.png">
 </head>
 <body>
-    <input style="display: none;" type="file" accept=".txt" id="txtFileRead">
+    <input style="display: none;" type="file" accept=".JSON" id="jsonReader">
     <div class="buttonContainer">
         <button class="actionButton addDataButton" onclick="toggleMode('dataAddMode')">Add Data</button>
         <button class="actionButton addRowButton" onclick="addRow()">Add Row</button>
         <button class="actionButton deleteRowButton" onclick="toggleMode('deleteMode')">Delete</button>
         <button class="actionButton editButton" onclick="toggleMode('editMode')">Edit</button>
         <button class="actionButton resetButton" onclick="resetTable()">Reset</button>
-        <button class="actionButton saveScrButton">Save Screenshot</button>
-        <button class="actionButton printButton">Print</button>
-        <button class="actionButton saveButton">Save</button>
-        <button class="actionButton openButton">Open</button>
+        <button class="actionButton saveScrButton" onclick="saveAsImage()">Save Screenshot</button>
+        <button class="actionButton printButton" onclick="printPage()">Print</button>
+        <button class="actionButton saveButton" onclick="saveAsJSON()">Save</button>
+        <button class="actionButton openButton" onclick="openJSON()">Open</button>
     </div>
     <table class="dataTable">
         <tr class="tableRow" id="row0" onclick="addData(0)">
@@ -26,6 +26,7 @@
         </tr>
     </table>
     <input type="color" id="colorPickerElement" label="Pick your color!">
+    <script src="js/html2canvas.js"></script>
     <script src="js/functions.js"></script>
     <script src="js/tableManipulation.js"></script>
     <script src="js/save.js"></script>
