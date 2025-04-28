@@ -7,9 +7,6 @@ let currentlyEditingElement;
 // Arrays
 let tableMatrix = [[0]];
 
-// Numbers
-let currentRowId = 0;
-
 // Objects
 let modes = {
     dataAddMode: {
@@ -46,12 +43,17 @@ let editingStyle;
 // Displays the table matrix in the console for debugging purposes
 function displayMatrix() {
     tableMatrix.forEach((row, rowIndex) => {
-        let logDisplay = "";
-        row.forEach((data, dataIndex) => {
-            logDisplay += `${data} `;
-        });
-        logDisplay += `\n`
-        console.log(logDisplay);
+        if(row.length === 0) {
+            console.log("Empty row");
+        }
+        else{
+            let logDisplay = "";
+            row.forEach((data, dataIndex) => {
+                logDisplay += `${data} `;
+            });
+            logDisplay += `\n`
+            console.log(logDisplay);
+        }
     });
 }
 
@@ -80,6 +82,7 @@ function toggleButtonStyle(buttonIndex) {
 // Toggles the state of a mode and updates button styles accordingly
 function toggleMode(mode) {
     let tableRows = document.querySelectorAll(".tableRow");
+    let tableData = document.querySelectorAll(".tableData");
 
     if(mode === false){
         Object.keys(modes).forEach((m) => {
@@ -107,7 +110,7 @@ function toggleMode(mode) {
         });
     }
 
-    if(modes.dataAddMode.state) {
+    if(modes.dataAddMode.state || modes.deleteMode.state || modes.editMode.state) {
         tableRows.forEach((row) => {
             row.style.cursor = "pointer";
         });
@@ -116,6 +119,18 @@ function toggleMode(mode) {
     else {
         tableRows.forEach((row) => {
             row.style.cursor = "";
+        });
+    }
+
+    if(modes.deleteMode.state || modes.dataAddMode.state) {
+        tableData.forEach((data) => {
+            data.setAttribute("contenteditable", "false");
+        });
+    }
+
+    else {
+        tableData.forEach((data) => {
+            data.setAttribute("contenteditable", "true");
         });
     }
 
@@ -146,6 +161,8 @@ function toggleMode(mode) {
 
 // Toggles the state of a submode and updates button styles accordingly
 function toggleSubMode(mode, submode) {
+    let tableData = document.querySelectorAll(".tableData");
+
     clearButtonStyles([modes[mode].submodes[submode].button, modes[mode].button]);
     modes[mode].submodes[submode].state = !modes[mode].submodes[submode].state;
     toggleButtonStyle(modes[mode].submodes[submode].button);
@@ -156,12 +173,23 @@ function toggleSubMode(mode, submode) {
                 modes[mode].submodes[m].state = false;
             }
         }
+
+        tableData.forEach((data) => {
+            data.setAttribute("contenteditable", "false");
+        });
+    }
+
+    else {
+        tableData.forEach((data) => {
+            data.setAttribute("contenteditable", "true");
+        });
     }
 }
 
 // Adds a new row to the table and updates the table matrix
 function addRow() {
-    currentRowId++;
+    let currentRowId = tableMatrix.length;
+    tableMatrix[currentRowId] = [];
     let cursor;
     modes.dataAddMode.state ? cursor = "style = 'cursor: pointer;'" : cursor = "";
 
@@ -184,7 +212,7 @@ function addData(rowId) {
 
         let id = `${rowId}${tableMatrix[rowId].length - 1}`;
 
-        row.innerHTML += `<td contenteditable="true" spellcheck="false" class="tableData" id="data${id}" onclick="deleteEditData(${id})">Text</td>`;
+        row.innerHTML += `<td contenteditable="${modes.dataAddMode.state ? "false" : "true"}" spellcheck="false" class="tableData" id="data${id}" onclick="deleteEditData('${id}')">Text</td>`;
 
         styleData();
     }
@@ -192,11 +220,6 @@ function addData(rowId) {
 
 // Deletes or edits a data cell based on the current mode
 function deleteEditData(dataId){
-    dataId = dataId.toString();
-    if(dataId.length == 1) {
-        dataId = `0${dataId}`;
-    }
-
     let data = document.querySelector(`#data${dataId}`);
     if(modes.deleteMode.state) {
         data.remove();
@@ -253,7 +276,6 @@ function styleRows() {
 function resetTable() {
     table.innerHTML = `<tr class="tableRow" id="row0" onclick="addData(0)"><td contenteditable="true" spellcheck="false" class="tableData" id="data00" onclick="deleteEditData('00')">Text</td></tr>`;
     tableMatrix = [[0]];
-    currentRowId = 0;
     toggleMode(false);
 }
 
@@ -276,3 +298,21 @@ colorPickerElement.addEventListener("input", (e) => {
         }
     }
 });
+
+window.addEventListener("paste", (e) => {
+    e.preventDefault();
+
+    let text = (e.clipboardData || window.clipboardData).getData("text");
+
+    let span = document.createElement("span");
+    span.textContent = text;
+
+    let selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+        let range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(span);
+    }
+});
+
+// TODO: Add functionality to add rows from anywhere in the table (top, bottom from the selected row)

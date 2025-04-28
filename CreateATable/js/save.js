@@ -48,7 +48,7 @@ function saveAsImage(){
 
 // Saves the table content as a JSON file
 function saveAsJSON(){
-    let data = JSON.stringify(table.innerHTML);
+    let data = `${JSON.stringify(table.innerHTML)} \n ${JSON.stringify(tableMatrix)}`;
     let blob = new Blob([data], { type: "application/json" });
     let link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -70,8 +70,12 @@ function openJSON(){
 
             reader.onload = (e) => {
                 try {
-                    let tableContent = JSON.parse(e.target.result);
+                    let result = e.target.result;
+                    let indexOfLastNewline = result.lastIndexOf("\n");
+                    let tableContent = JSON.parse(result.substring(0, indexOfLastNewline));
+                    let tableMatrixContent = JSON.parse(result.substring(indexOfLastNewline + 1));
                     table.innerHTML = tableContent;
+                    tableMatrix = tableMatrixContent;
 
                     styleRows();
                     styleData();
@@ -86,4 +90,30 @@ function openJSON(){
     });
 }
 
-// TODO: Add local storage saving and loading to save what user was working on
+// Saves the current table content to local storage
+window.addEventListener("beforeunload", (event) => {
+    saveToLocalStorage("tableContent", table.innerHTML);
+    saveToLocalStorage("tableMatrix", JSON.stringify(tableMatrix));
+});
+
+// Loads the table content from local storage when the page is loaded
+window.addEventListener("load", () => {
+    let savedContent = getFromLocalStorage("tableContent");
+    if (savedContent) {
+        table.innerHTML = savedContent;
+        styleRows();
+        styleData();
+    }
+
+    let savedMatrix = getFromLocalStorage("tableMatrix");
+
+    tableMatrix = savedMatrix ? JSON.parse(savedMatrix) : tableMatrix;
+
+    document.querySelectorAll(".tableRow").forEach((row) => {
+        row.style.cursor = "";
+    });
+
+    document.querySelectorAll(".tableData").forEach((data) => {
+        data.setAttribute("contenteditable", "true");
+    });
+});
